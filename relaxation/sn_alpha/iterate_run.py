@@ -12,8 +12,8 @@ except:
 
 def replace_run_pressure(run, pres):
     run_folder = "run_" + str(run)
-    in_file = "na.bcc.vcrelax." + str(pres) + ".in"
-    out_file = "na.bcc.vcrelax." + str(pres) + ".out"
+    in_file = "sn.alpha.vcrelax." + str(pres) + ".in"
+    out_file = "sn.alpha.vcrelax." + str(pres) + ".out"
     final_coords = False
     next_line = False
     with open(os.path.join(run_folder, out_file)) as f:
@@ -42,6 +42,6 @@ def replace_run_pressure(run, pres):
     with open(os.path.join(new_run_folder, in_file), 'w') as f:
             f.write(new_file)
 
-for p in range(-10, 101, 10):
-    replace_run_pressure(run_no, p)
+#for p in range(-10, 101, 10):
+replace_run_pressure(run_no, 0)
     
