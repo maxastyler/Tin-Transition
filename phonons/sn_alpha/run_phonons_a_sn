@@ -43,7 +43,7 @@ for ((i=1;i<=$#;i=i+2))
 do
 	j=$((i+1))
 	cat > sn.alpha.ph.${!i}.${!j}.in << EOF
-Beta Tin Phonon Calculation for Lat_Param=11.07803293
+Alpha Tin Phonon Calculation for Lat_Param=11.07803293
 &inputph
         prefix = 'sn.alpha',
         ldisp = .true.,

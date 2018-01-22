@@ -1,4 +1,5 @@
 #!/bin/sh
+#There are 29 phonons for alpha sn
 #This script allows splitting up of a phonon job over multiple computers on the ssh network, so each one does a certain number of the phonons.
 #Put in a list of phonons by $./run_phonons_ssh "`cat phon_file`"
 COMPS="$1"
