@@ -1,0 +1,60 @@
+#!/bin/sh
+
+source ~/.profile
+cd `echo $0 | sed 's/\(.*\)\/.*/\1/'` # extract pathname
+MASTER_DIR=`pwd`
+
+CALC_DIR="/scratch/s1333534/sn_alpha_phonon"
+mkdir -p $CALC_DIR
+cd $CALC_DIR
+
+cat > sn.alpha.scf.in << EOF
+&control
+        calculation = 'scf',
+        prefix = 'sn.alpha',
+        tstress = .true.,
+/
+&system
+        ibrav = 2,
+        celldm(1) = 12.38258663,
+        nat = 2,
+        ntyp = 1,
+        ecutwfc = 50,
+        ecutrho = 400,
+/
+&electrons
+        mixing_beta = 0.7,
+        conv_thr = 1.0d-10,
+/
+ATOMIC_SPECIES
+ Sn 118.71 sn_pbe_v1.4.uspp.F.UPF
+ATOMIC_POSITIONS crystal
+ Sn 0.0 0.0 0.0
+ Sn 0.25 0.25 0.25
+K_POINTS automatic
+ 16 16 16       1 1 1
+EOF
+
+mpirun -np 4 pw.x < sn.alpha.scf.in > sn.alpha.scf.out
+
+#Go through the inputs, pairing up the phonons (input like p1start p1end p2start p2end...)
+
+for ((i=1;i<=$#;i=i+2))
+do
+	j=$((i+1))
+	cat > sn.alpha.ph.${!i}.${!j}.in << EOF
+Beta Tin Phonon Calculation for Lat_Param=11.07803293
+&inputph
+        prefix = 'sn.alpha',
+        ldisp = .true.,
+        nq1 = 8,
+        nq2 = 8,
+        nq3 = 8,
+	start_q = ${!i},
+	last_q = ${!j},
+        fildyn = 'sn.alpha.dyn',
+/
+EOF
+	mpirun -np 4 ph.x < sn.alpha.ph.${!i}.${!j}.in > sn.alpha.ph.${!i}.${!j}.out
+	cp *.dyn* $MASTER_DIR
+done
