@@ -6,7 +6,7 @@ run_no=1
 
 MASTER_DIR=`pwd`
 RUN_DIR="$MASTER_DIR/run_$run_no"
-SCRATCH_DIR="/scratch/s1333534/sn_alpha_relax/run_$run_no"
+SCRATCH_DIR="/scratch/s1333534/sn_beta_relax/run_$run_no"
 
 mkdir -p $SCRATCH_DIR
 
@@ -15,10 +15,10 @@ cd "$SCRATCH_DIR"
 for TARGETPRESSURE in `seq 0 10 0`; do #-1 GPa to 10GPa
 
 	
-	cat > sn.alpha.vcrelax.$TARGETPRESSURE.in << EOF
+	cat > sn.beta.vcrelax.$TARGETPRESSURE.in << EOF
 &control 
 	calculation = 'vc-relax',
-	prefix = 'sn.alpha.relax',
+	prefix = 'sn.beta.relax',
 /
 &system
 	ibrav = 0,
@@ -59,7 +59,7 @@ K_POINTS automatic
  12 12 20 1 1 1
 EOF
 	
-	mpirun -np 4 pw.x < sn.alpha.vcrelax.$TARGETPRESSURE.in > sn.alpha.vcrelax.$TARGETPRESSURE.out
+	mpirun -np 4 pw.x < sn.beta.vcrelax.$TARGETPRESSURE.in > sn.beta.vcrelax.$TARGETPRESSURE.out
 
 done;
 
