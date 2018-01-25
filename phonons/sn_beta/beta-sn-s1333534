@@ -1,0 +1,89 @@
+#!/bin/bash --login
+#$ -N b-sn-ph-s1333534
+#$ -V
+#$ -pe mpi 64
+#$ -q sopa.1.day
+#PBS -l l_hrt=23:58:00
+
+hostname
+#module load mpi/openmpi-x86_64
+
+echo $SGE_O_WORKDIR
+
+export SGE_O_WORKDIR=$(readlink -f $SGE_O_WORKDIR)
+
+cd /home/s1333534/b_sn_eq_ph
+
+pwd
+
+export PW=/home/s1333534/quantum_espresso/qe-6.1/bin/pw.x
+export PH=/home/s1333534/quantum_espresso/qe-6.1/bin/ph.x
+export ESPRESSO_PSEUDO=/home/s1333534/quantum_espresso/qe-6.1/pseudo
+
+export OMP_NUM_THREADS=1
+
+cd `echo $0 | sed 's/\(.*\)\/.*/\1/'` # extract pathname
+#MASTER_DIR=`pwd`
+MASTER_DIR=/home/s1333534/b_sn_eq_ph
+ECUTWFC=50
+ECUTRHO=`expr 8 \* $ECUTWFC`
+NUMCORES=64
+
+mkdir -p /scratch/s1333534/sn.beta.phonon/
+cd /scratch/s1333534/sn.beta.phonon/
+#The self-consistent calculation script
+cat > sn.beta.scf.in << EOF
+&control
+        calculation = 'scf',
+        prefix = 'sn.beta',
+        tstress = .true.,
+/
+&system
+        ibrav = 0,
+        celldm(1) = 11.237464,
+        nat = 2,
+        ntyp = 1,
+        ecutwfc = $ECUTWFC,
+        ecutrho = $ECUTRHO,
+        occupations = 'smearing',
+        smearing = 'm-v',
+        nr1=80,
+        nr2=80,
+        nr3=80,
+        degauss = 0.02,
+/
+&electrons
+        mixing_beta = 0.7,
+        conv_thr = 1.0d-8,
+/
+CELL_PARAMETERS {alat}
+   0.986020  -0.000000  -0.000000
+  -0.000000   0.986020  -0.000000
+   0.493010   0.493010   0.265859
+ATOMIC_SPECIES
+ Sn 118.71 sn_pbe_v1.4.uspp.F.UPF
+ATOMIC_POSITIONS crystal
+ Sn 0.625000000   0.875000000   0.750000000
+ Sn 0.375000000   0.125000000   0.250000000
+K_POINTS automatic
+ 12 12 20       1 1 1
+EOF
+        echo "Calculating scf"
+        mpirun -np $NUMCORES $PW -nk 4 < sn.beta.scf.in | tee sn.beta.scf.out
+        cat > sn.beta.ph.in << EOF
+Beta Tin Phonon Calculation for Lat_Param=11.237464
+&inputph
+        prefix = 'sn.beta',
+        ldisp = .true.,
+        nq1 = 8,
+        nq2 = 8,
+        nq3 = 8,
+        fildyn = 'sn.beta.dyn',
+        max_seconds = 84600,
+/
+EOF
+        echo "Calculating phonons"
+        mpirun -np $NUMCORES $PH -nk 4 < sn.beta.ph.in | tee sn.beta.ph.out
+        cp *.in *.out *.dyn* $MASTER_DIR
+        #rm -rf /scratch/s1333534/sn.beta.phonon
+        cd $MASTER_DIR
