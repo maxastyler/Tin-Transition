@@ -13,7 +13,7 @@ echo $SGE_O_WORKDIR
 
 export SGE_O_WORKDIR=$(readlink -f $SGE_O_WORKDIR)
 
-cd /home/s1333534/b_sn_eq_ph
+cd /home/s1333534/git/Tin-Transition/phonons/sn_beta/
 
 pwd
 
@@ -25,7 +25,7 @@ export OMP_NUM_THREADS=1
 
 cd `echo $0 | sed 's/\(.*\)\/.*/\1/'` # extract pathname
 #MASTER_DIR=`pwd`
-MASTER_DIR=/home/s1333534/b_sn_eq_ph
+MASTER_DIR=/home/s1333534/git/Tin-Transition/phonons/sn_beta/
 ECUTWFC=50
 ECUTRHO=`expr 8 \* $ECUTWFC`
 NUMCORES=64
