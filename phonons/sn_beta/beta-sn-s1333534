@@ -7,6 +7,7 @@
 
 hostname
 #module load mpi/openmpi-x86_64
+#Phonons to run: 17, 25, 28, 32, 37, 52, 55
 
 echo $SGE_O_WORKDIR
 
@@ -40,11 +41,11 @@ cat > sn.beta.scf.in << EOF
 /
 &system
         ibrav = 0,
-        celldm(1) = 11.237464,
+        celldm(1) = 11.07803293,
         nat = 2,
         ntyp = 1,
-        ecutwfc = $ECUTWFC,
-        ecutrho = $ECUTRHO,
+        ecutwfc = 50,
+        ecutrho = 400,
         occupations = 'smearing',
         smearing = 'm-v',
         nr1=80,
@@ -54,12 +55,12 @@ cat > sn.beta.scf.in << EOF
 /
 &electrons
         mixing_beta = 0.7,
-        conv_thr = 1.0d-8,
+        conv_thr = 1.0d-10,
 /
 CELL_PARAMETERS {alat}
-   0.986020  -0.000000  -0.000000
-  -0.000000   0.986020  -0.000000
-   0.493010   0.493010   0.265859
+ 1.000000000   0.000000000   0.000000000
+ 0.000000000   1.000000000   0.000000000
+ 0.500000000   0.500000000   0.269532635
 ATOMIC_SPECIES
  Sn 118.71 sn_pbe_v1.4.uspp.F.UPF
 ATOMIC_POSITIONS crystal
@@ -70,20 +71,119 @@ K_POINTS automatic
 EOF
         echo "Calculating scf"
         mpirun -np $NUMCORES $PW -nk 4 < sn.beta.scf.in | tee sn.beta.scf.out
+
+
         cat > sn.beta.ph.in << EOF
-Beta Tin Phonon Calculation for Lat_Param=11.237464
+Beta Tin Phonon Calculation for Lat_Param=11.07803293
 &inputph
         prefix = 'sn.beta',
         ldisp = .true.,
         nq1 = 8,
         nq2 = 8,
         nq3 = 8,
+	start_q = 17,
+	last_q = 17,
         fildyn = 'sn.beta.dyn',
-        max_seconds = 84600,
 /
 EOF
         echo "Calculating phonons"
         mpirun -np $NUMCORES $PH -nk 4 < sn.beta.ph.in | tee sn.beta.ph.out
-        cp *.in *.out *.dyn* $MASTER_DIR
+        cp *.dyn* $MASTER_DIR
+        cat > sn.beta.ph.in << EOF
+Beta Tin Phonon Calculation for Lat_Param=11.07803293
+&inputph
+        prefix = 'sn.beta',
+        ldisp = .true.,
+        nq1 = 8,
+        nq2 = 8,
+        nq3 = 8,
+	start_q = 25,
+	last_q = 25,
+        fildyn = 'sn.beta.dyn',
+/
+EOF
+        echo "Calculating phonons"
+        mpirun -np $NUMCORES $PH -nk 4 < sn.beta.ph.in | tee sn.beta.ph.out
+        cp *.dyn* $MASTER_DIR
+        cat > sn.beta.ph.in << EOF
+Beta Tin Phonon Calculation for Lat_Param=11.07803293
+&inputph
+        prefix = 'sn.beta',
+        ldisp = .true.,
+        nq1 = 8,
+        nq2 = 8,
+        nq3 = 8,
+	start_q = 28,
+	last_q = 28,
+        fildyn = 'sn.beta.dyn',
+/
+EOF
+        echo "Calculating phonons"
+        mpirun -np $NUMCORES $PH -nk 4 < sn.beta.ph.in | tee sn.beta.ph.out
+        cp *.dyn* $MASTER_DIR
+        cat > sn.beta.ph.in << EOF
+Beta Tin Phonon Calculation for Lat_Param=11.07803293
+&inputph
+        prefix = 'sn.beta',
+        ldisp = .true.,
+        nq1 = 8,
+        nq2 = 8,
+        nq3 = 8,
+	start_q = 32,
+	last_q = 32,
+        fildyn = 'sn.beta.dyn',
+/
+EOF
+        echo "Calculating phonons"
+        mpirun -np $NUMCORES $PH -nk 4 < sn.beta.ph.in | tee sn.beta.ph.out
+        cp *.dyn* $MASTER_DIR
+        cat > sn.beta.ph.in << EOF
+Beta Tin Phonon Calculation for Lat_Param=11.07803293
+&inputph
+        prefix = 'sn.beta',
+        ldisp = .true.,
+        nq1 = 8,
+        nq2 = 8,
+        nq3 = 8,
+	start_q = 37,
+	last_q = 37,
+        fildyn = 'sn.beta.dyn',
+/
+EOF
+        echo "Calculating phonons"
+        mpirun -np $NUMCORES $PH -nk 4 < sn.beta.ph.in | tee sn.beta.ph.out
+        cp *.dyn* $MASTER_DIR
+        cat > sn.beta.ph.in << EOF
+Beta Tin Phonon Calculation for Lat_Param=11.07803293
+&inputph
+        prefix = 'sn.beta',
+        ldisp = .true.,
+        nq1 = 8,
+        nq2 = 8,
+        nq3 = 8,
+	start_q = 52,
+	last_q = 52,
+        fildyn = 'sn.beta.dyn',
+/
+EOF
+        echo "Calculating phonons"
+        mpirun -np $NUMCORES $PH -nk 4 < sn.beta.ph.in | tee sn.beta.ph.out
+        cp *.dyn* $MASTER_DIR
+        cat > sn.beta.ph.in << EOF
+Beta Tin Phonon Calculation for Lat_Param=11.07803293
+&inputph
+        prefix = 'sn.beta',
+        ldisp = .true.,
+        nq1 = 8,
+        nq2 = 8,
+        nq3 = 8,
+	start_q = 55,
+	last_q = 55,
+        fildyn = 'sn.beta.dyn',
+/
+EOF
+        echo "Calculating phonons"
+        mpirun -np $NUMCORES $PH -nk 4 < sn.beta.ph.in | tee sn.beta.ph.out
+        cp *.dyn* $MASTER_DIR
         #rm -rf /scratch/s1333534/sn.beta.phonon
         cd $MASTER_DIR
