@@ -1,0 +1,11 @@
+Beta Tin Phonon Calculation for Lat_Param=11.07803293
+&inputph
+        prefix = 'sn.beta',
+        ldisp = .true.,
+        nq1 = 8,
+        nq2 = 8,
+        nq3 = 8,
+	start_q = 2,
+	last_q = 2,
+        fildyn = 'sn.beta.dyn',
+/
